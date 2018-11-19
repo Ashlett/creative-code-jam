@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>tracking.js + processing + 3D shapes</title>
+  <script src="tracking-min.js"></script>
+  <script src="p5.min.js"></script>
+  <script src="p5.dom.min.js"></script>
+  <script src="p5.sound.min.js"></script>
+  <script src="sketch.js"></script>
+</head>
+<body>
+  <video id="myVideo" width="400" height="300" preload autoplay loop muted></video>
+  <script>
+    var video = document.querySelector("#myVideo");
+
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({video: true})
+      .then(function(stream) {
+        video.srcObject = stream;
+      })
+      .catch(function(err0r) {
+        console.log("Something went wrong!");
+      });
+    }
+    var colors = new tracking.ColorTracker(['magenta', 'cyan', 'yellow']);
+
+    var height;
+    var width;
+    var color;
+    var valueY;
+    var valueX;
+
+    colors.on('track', function(event) {
+      if (event.data.length === 0) {
+        // No colors were detected in this frame.
+      } else {
+        event.data.forEach(function(rect) {
+          valueX = rect.x;
+          valueY = rect.y;
+          height = rect.height;
+          width = rect.width;
+          color = rect.color;
+        });
+        console.log(valueX, valueY, height, width, color);
+      }
+    });
+
+    tracking.track('#myVideo', colors);
+  </script>
+</body>
+</html>
